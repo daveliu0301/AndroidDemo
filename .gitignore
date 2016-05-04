@@ -56,4 +56,8 @@ gradle-app.setting
 *~
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
+<<<<<<< HEAD
 # gradle/wrapper/gradle-wrapper.properties
+=======
+# gradle/wrapper/gradle-wrapper.properties
+>>>>>>> 06bf4186f4e007e3e3a7d76053c1b77ec659d730
