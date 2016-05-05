@@ -1,1 +1,1 @@
-include ':app', ':implicitintent'
+include ':app', ':implicitintent', ':systempermissions'
