@@ -26,9 +26,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_red_dark"
-            android:onClick="@{viewModel::requestCamera}"
+            android:onClick="@{viewModel.dispatchTakeThumbnailIntent}"
             android:padding="10dp"
-            android:text="take picture" />
+            android:text="get Thumbnail" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_red_dark"
+            android:onClick="@{viewModel.dispatchTakePictureIntent}"
+            android:padding="10dp"
+            android:text="save full-size photo" />
 
         <ImageView
             android:id="@+id/picture"
