@@ -1,5 +1,6 @@
 package com.liu.dave.stories.view;
 
+import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -14,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.liu.dave.stories.LeftDrawerAdapter;
 import com.liu.dave.stories.R;
@@ -25,7 +27,7 @@ import com.liu.dave.stories.viewmodel.MainViewModel;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MainViewModel.DataChangeListener, LeftDrawerAdapter.OnItemClickListener {
-
+    private static final String EXTRA_PERSON_LIST = "EXTRA_PERSON_LIST";
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private LeftDrawerAdapter mLeftDrawerAdapter;
     private ViewPager mViewPager;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
     private MainViewModel mViewModel;
     private ActionBarDrawerToggle mDrawerToggle;
     private ActionBar mActionBar;
+    private ArrayList<Person> mPersons = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,23 +60,26 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
         mLeftDrawer.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mLeftDrawer.setAdapter(mLeftDrawerAdapter);
 
-        if (mActionBar != null)
-            mDrawer.addDrawerListener(new ActionBarDrawerToggle(this, mDrawer, R.string.open_drawer, R.string.close_drawer) {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, R.string.open_drawer, R.string.close_drawer) {
 
-                @Override
-                public void onDrawerOpened(View drawerView) {
-                    super.onDrawerOpened(drawerView);
-                    mActionBar.setTitle(R.string.drawer_opened_title);
-                }
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                mActionBar.setTitle(R.string.drawer_opened_title);
+                invalidateOptionsMenu();// creates call to onPrepareOptionsMenu()
+            }
 
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    super.onDrawerClosed(drawerView);
-                    mActionBar.setTitle(R.string.app_name);
-                }
-            });
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                mActionBar.setTitle(R.string.app_name);
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawer.addDrawerListener(mDrawerToggle);
 
-
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setHomeButtonEnabled(true);
     }
 
     @Override
@@ -83,13 +89,13 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
             @Override
             public void run() {
                 try {
-                    Thread.sleep(1000 * 15);
+                    Thread.sleep(1000 * 5);
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mSectionsPagerAdapter.setPersons(persons);
-                            mLeftDrawerAdapter.setPersons(persons);
+                            Toast.makeText(MainActivity.this, "load data success", Toast.LENGTH_SHORT).show();
+                            setData(persons);
                         }
                     });
                 } catch (InterruptedException e) {
@@ -101,19 +107,36 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
 
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    private void setData(ArrayList<Person> persons) {
+        mPersons = persons;
+        mSectionsPagerAdapter.setPersons(mPersons);
+        mLeftDrawerAdapter.setPersons(mPersons);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+    public void onPostCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_PERSON_LIST, mPersons);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        ArrayList<Person> persons = savedInstanceState.getParcelableArrayList(EXTRA_PERSON_LIST);
+        setData(persons);
     }
 
     @Override
@@ -144,6 +167,9 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
