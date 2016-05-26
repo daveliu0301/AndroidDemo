@@ -2,14 +2,18 @@ package com.liu.dave.stories.view;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.liu.dave.stories.LeftDrawerAdapter;
 import com.liu.dave.stories.R;
@@ -30,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
     private RecyclerView mLeftDrawer;
     private ActivityMainBinding mBinding;
     private MainViewModel mViewModel;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mViewModel = new MainViewModel(this);
         mBinding.setViewModel(mViewModel);
+
+        mActionBar = getSupportActionBar();
 
         mStrip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -48,6 +56,22 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mLeftDrawer.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mLeftDrawer.setAdapter(mLeftDrawerAdapter);
+
+        if (mActionBar != null)
+            mDrawer.addDrawerListener(new ActionBarDrawerToggle(this, mDrawer, R.string.open_drawer, R.string.close_drawer) {
+
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    mActionBar.setTitle(R.string.drawer_opened_title);
+                }
+
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    super.onDrawerClosed(drawerView);
+                    mActionBar.setTitle(R.string.app_name);
+                }
+            });
 
 
     }
@@ -78,6 +102,21 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onItemClick(int position) {
         mViewPager.setCurrentItem(position);
         mDrawer.closeDrawer(mLeftDrawer);
@@ -86,6 +125,14 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Dat
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mDrawer.removeDrawerListener(mDrawerToggle);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean drawerOpen = mDrawer.isDrawerOpen(mLeftDrawer);
+        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
