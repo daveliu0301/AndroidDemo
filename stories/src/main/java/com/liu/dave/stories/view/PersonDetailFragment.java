@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.liu.dave.stories.R;
-import com.liu.dave.stories.databinding.FragmentMainBinding;
+import com.liu.dave.stories.databinding.FragmentPersonDetailBinding;
 import com.liu.dave.stories.model.Person;
 import com.liu.dave.stories.viewmodel.PersonDetailViewModel;
 
@@ -29,8 +29,12 @@ public class PersonDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FragmentMainBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_main, container, false);
-        binding.setViewModel(new PersonDetailViewModel((Person) getArguments().getParcelable(EXTRA_PERSON)));
+        FragmentPersonDetailBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(getContext()),
+                R.layout.fragment_person_detail,
+                container,
+                false);
+        binding.setViewModel(new PersonDetailViewModel(getActivity(),(Person) getArguments().getParcelable(EXTRA_PERSON)));
         return binding.getRoot();
     }
 }

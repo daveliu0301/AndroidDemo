@@ -18,9 +18,11 @@
 
 
         <TextView
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/activity_horizontal_margin"
+            android:onClick="@{viewModel.jumpToNext}"
             android:text="@{viewModel.name}" />
 
         <TextView
