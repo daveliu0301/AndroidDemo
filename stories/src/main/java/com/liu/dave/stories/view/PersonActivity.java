@@ -1,15 +1,21 @@
 package com.liu.dave.stories.view;
 
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -49,6 +55,8 @@ public class PersonActivity extends AppCompatActivity implements MainViewModel.D
 
         mActionBar = getSupportActionBar();
 
+        showNotification();
+
         mStrip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -82,6 +90,23 @@ public class PersonActivity extends AppCompatActivity implements MainViewModel.D
         mActionBar.setHomeButtonEnabled(true);
     }
 
+    private void showNotification() {
+        Intent detailIntent = new Intent(this, NotificationActivity.class);
+        PendingIntent pendingIntent = TaskStackBuilder.create(this)
+                .addNextIntentWithParentStack(detailIntent)
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        Notification notification = builder
+                .setContentIntent(pendingIntent)
+                .setContentTitle("title")
+                .setContentText("text")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .build();
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(0, notification);
+
+    }
+
     @Override
     public void onDataChanged(final ArrayList<Person> persons) {
 
@@ -89,7 +114,7 @@ public class PersonActivity extends AppCompatActivity implements MainViewModel.D
             @Override
             public void run() {
                 try {
-                    Thread.sleep(1000 * 5);
+                    Thread.sleep(1000 * 1 );
 
                     runOnUiThread(new Runnable() {
                         @Override
