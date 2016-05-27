@@ -101,6 +101,7 @@ public class PersonActivity extends AppCompatActivity implements MainViewModel.D
                 .setContentTitle("title")
                 .setContentText("text")
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(true)
                 .build();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(0, notification);
