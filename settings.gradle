@@ -1,1 +1,1 @@
-include ':app', ':implicitintent', ':systempermissions', ':sharingsimpledata', ':capturingphotos', ':stories'
+include ':app', ':implicitintent', ':systempermissions', ':sharingsimpledata', ':capturingphotos', ':stories', ':retaininstance'
