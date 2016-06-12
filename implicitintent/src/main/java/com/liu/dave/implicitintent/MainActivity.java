@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView phoneCallView, mapView, webpagelView, sendEmailView, createCalendarEventView, getContactView;
+    private TextView phoneCallView, mapView, webpagelView, sendEmailView, createCalendarEventView, sendMsgView, getContactView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         webpagelView = (TextView) findViewById(R.id.web_view);
         sendEmailView = (TextView) findViewById(R.id.send_email);
         createCalendarEventView = (TextView) findViewById(R.id.create_calendar_event);
+        sendMsgView = (TextView) findViewById(R.id.send_msg_multiple);
         getContactView = (TextView) findViewById(R.id.get_contact);
 
         phoneCallView.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +72,16 @@ public class MainActivity extends AppCompatActivity {
                 Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
                 pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
                 startActivityForResult(pickContactIntent, 0);
+            }
+        });
+
+        sendMsgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse("smsto://15201623239; 13511038976");
+                Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                intent.putExtra("sms_body", "The SMS text");
+                startActivity(intent);
             }
         });
     }
